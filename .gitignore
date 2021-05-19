@@ -1,8 +1,5 @@
 # Folders :
-storage/
-mixed-dataset/
-dataset_old/
-old/
+source/
 
 # Files :
 classifier.pickle

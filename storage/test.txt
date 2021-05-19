@@ -1,0 +1,2 @@
+je,suis,nicolas;neutre
+je,mange,du,chocolat;positive
