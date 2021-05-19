@@ -53,9 +53,9 @@ def getTextsForModel(cleaned_tokens_list):
 
 def trainClassifier():
     #~~~~~~-> Getting the dataset...
-    dataset_positive = getCleanDataset('dataset/positive_cleaned_tokens.txt')
-    dataset_negative = getCleanDataset('dataset/negative_cleaned_tokens.txt')
-    dataset_neutral = getCleanDataset('dataset/neutral_cleaned_tokens.txt')
+    dataset_positive = getCleanDataset('dataset/positive_cleaned_tokens_large.txt')
+    dataset_negative = getCleanDataset('dataset/negative_cleaned_tokens_large.txt')
+    dataset_neutral = getCleanDataset('dataset/neutral_cleaned_tokens_large.txt')
     #~~~~~~-> Making the cleaned tokens list...
     positive_cleaned_tokens_list = getTokensFromDataset(dataset_positive)
     negative_cleaned_tokens_list = getTokensFromDataset(dataset_negative)
