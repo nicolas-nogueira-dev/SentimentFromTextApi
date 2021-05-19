@@ -6,6 +6,4 @@ old/
 
 # Files :
 classifier.pickle
-negative_cleaned_tokens_large.txt
-positive_cleaned_tokens_large.txt
-neutral_cleaned_tokens_large.txt
+tmp.py

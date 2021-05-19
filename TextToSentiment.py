@@ -97,21 +97,26 @@ def textToSentiment(classifier, custom_text):
     return {'original_text':custom_text,'prediction':probs}
 def getDatasetInfos():
     #~~~~~~-> Getting the dataset...
-    dataset_positive = getCleanDataset('mixed-dataset/positive_cleaned_tokens.txt')
-    dataset_negative = getCleanDataset('mixed-dataset/negative_cleaned_tokens.txt')
+    dataset_positive = getCleanDataset('dataset/positive_cleaned_tokens_large.txt')
+    dataset_negative = getCleanDataset('dataset/negative_cleaned_tokens_large.txt')
+    dataset_neutral = getCleanDataset('dataset/neutral_cleaned_tokens_large.txt')
     #~~~~~~-> Making the cleaned tokens list...
     positive_cleaned_tokens_list = getTokensFromDataset(dataset_positive)
     negative_cleaned_tokens_list = getTokensFromDataset(dataset_negative)
+    neutral_cleaned_tokens_list = getTokensFromDataset(dataset_neutral)
     #~~~~~~-> Making the dataset...
     positive_tokens_for_model = getTextsForModel(positive_cleaned_tokens_list)
     negative_tokens_for_model = getTextsForModel(negative_cleaned_tokens_list)
+    neutral_tokens_for_model = getTextsForModel(neutral_cleaned_tokens_list)
     positive_dataset = [(tweet_dict, 'Positive') for tweet_dict in positive_tokens_for_model]
     negative_dataset = [(tweet_dict, 'Negative') for tweet_dict in negative_tokens_for_model]
-    dataset =dataset_positive + dataset_negative
+    neutral_dataset = [(tweet_dict, 'Neutral') for tweet_dict in neutral_tokens_for_model]
+    dataset = positive_dataset + negative_dataset + neutral_dataset
 
     infos = {}
     infos['datasetSize'] = len(dataset)
     infos['posDatasetSize'] = len(dataset_positive)
     infos['negDatasetSize'] = len(dataset_negative)
+    infos['neuDatasetSize'] = len(dataset_neutral)
 
     return infos
