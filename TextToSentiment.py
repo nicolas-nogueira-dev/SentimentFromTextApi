@@ -94,7 +94,7 @@ def textToSentiment(classifier, custom_text):
     for sample in samples:
         probs[str(sample)] = round(prediction.prob(sample),4)
     return {'original_text':custom_text,'prediction':probs}
-    
+
 def getDatasetInfos():
     #~~~~~~-> Getting the dataset...
     dataset_positive = getCleanDataset('dataset/positive_cleaned_tokens_large.txt')
