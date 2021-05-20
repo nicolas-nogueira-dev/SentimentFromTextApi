@@ -18,6 +18,7 @@ async def process_handler(request):
 
 async def classifier_handler(request):
     trainClassifier()
+    classifier = trainDataValidator()
     return response.redirect('/')
 
 async def dataset_handler(request):

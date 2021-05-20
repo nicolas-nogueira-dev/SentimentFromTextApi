@@ -8,9 +8,7 @@ import pickle
 import re, string, random
 
 def removeNoise(tweet_tokens, stop_words = ()):
-
     cleaned_tokens = []
-
     for token, tag in pos_tag(tweet_tokens):
         token = re.sub('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+#]|[!*\(\),]|'\
                        '(?:%[0-9a-fA-F][0-9a-fA-F]))+','', token)
@@ -26,6 +24,7 @@ def removeNoise(tweet_tokens, stop_words = ()):
         if len(token) > 0 and token not in string.punctuation and token.lower() not in stop_words:
             cleaned_tokens.append(token.lower())
     return cleaned_tokens
+
 def getCleanDataset(dataSetPath):
     # Extract the raw data
     with open(dataSetPath, 'r', encoding='utf8') as file:
@@ -42,11 +41,13 @@ def getCleanDataset(dataSetPath):
     for i in range(listSize):
         process[i][0] = process[i][0].split(',')
     return process
+
 def getTokensFromDataset(dataset):
     list = []
     for i in dataset:
         list.append(i[0])
     return list
+
 def getTextsForModel(cleaned_tokens_list):
     for tweet_tokens in cleaned_tokens_list:
         yield dict([token, True] for token in tweet_tokens)
@@ -74,6 +75,7 @@ def trainClassifier():
     classifier = NaiveBayesClassifier.train(train_data)
     with open('classifier.pickle', 'wb') as f:
         pickle.dump(classifier, f)
+
 def trainDataValidator():
     try:
         with open('classifier.pickle', 'rb') as f:
@@ -82,19 +84,17 @@ def trainDataValidator():
         trainClassifier()
         with open('classifier.pickle', 'rb') as f:
             return pickle.load(f)
-def textToSentiment(classifier, custom_text):
 
+def textToSentiment(classifier, custom_text):
     custom_tokens = removeNoise(wordTokenize(custom_text))
     custom_dict = dict([token, True] for token in custom_tokens)
-
     prediction = classifier.prob_classify(custom_dict)
-
     probs = {}
     samples = prediction.samples()
     for sample in samples:
         probs[str(sample)] = round(prediction.prob(sample),4)
-
     return {'original_text':custom_text,'prediction':probs}
+    
 def getDatasetInfos():
     #~~~~~~-> Getting the dataset...
     dataset_positive = getCleanDataset('dataset/positive_cleaned_tokens_large.txt')
