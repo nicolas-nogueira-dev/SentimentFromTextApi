@@ -52,11 +52,16 @@ def getTextsForModel(cleaned_tokens_list):
     for tweet_tokens in cleaned_tokens_list:
         yield dict([token, True] for token in tweet_tokens)
 
-def trainClassifier():
+def trainClassifier(datasetFolder):
+    infos = {
+    'positive': datasetFolder + 'positive_cleaned_tokens_large.txt'
+    'negative': datasetFolder + 'negative_cleaned_tokens_large.txt'
+    'neutral': datasetFolder + 'neutral_cleaned_tokens_large.txt'
+    }
     #~~~~~~-> Getting the dataset...
-    dataset_positive = getCleanDataset('dataset/positive_cleaned_tokens_large.txt')
-    dataset_negative = getCleanDataset('dataset/negative_cleaned_tokens_large.txt')
-    dataset_neutral = getCleanDataset('dataset/neutral_cleaned_tokens_large.txt')
+    dataset_positive = getCleanDataset(infos['positive'])
+    dataset_negative = getCleanDataset(infos['negative'])
+    dataset_neutral = getCleanDataset(infos['neutral'])
     #~~~~~~-> Making the cleaned tokens list...
     positive_cleaned_tokens_list = getTokensFromDataset(dataset_positive)
     negative_cleaned_tokens_list = getTokensFromDataset(dataset_negative)
@@ -81,7 +86,7 @@ def trainDataValidator():
         with open('classifier.pickle', 'rb') as f:
             return pickle.load(f)
     except:
-        trainClassifier()
+        trainClassifier('dataset1')
         with open('classifier.pickle', 'rb') as f:
             return pickle.load(f)
 
