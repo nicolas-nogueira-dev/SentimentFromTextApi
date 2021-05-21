@@ -3,7 +3,7 @@ from TextToSentiment import *
 from nltk import *
 
 app = Sanic('TextToSentiment')
-useDataset = 'dataset3/'
+useDataset = 'dataset4/'
 classifier = trainDataValidator(useDataset)
 textToSentiment(classifier, 'I love chocolat')
 
@@ -26,8 +26,13 @@ async def dataset_handler(request):
     infos = getDatasetInfos(useDataset)
     return response.json(infos)
 
+async def choice_handler(request):
+    useDataset = str(request.form.get('choice'))
+    return response.redirect('/')
+
 app.add_route(home, '/')
 app.add_route(process_handler, '/process', methods=['POST'])
+app.add_route(choice_handler, '/dataset', methods=['POST'])
 app.add_route(classifier_handler, '/train')
 app.add_route(dataset_handler, '/dataset-infos')
 
