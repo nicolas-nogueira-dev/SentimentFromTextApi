@@ -3,7 +3,7 @@ from TextToSentiment import *
 from nltk import *
 
 app = Sanic('TextToSentiment')
-useDataset = 'dataset1/'
+useDataset = 'dataset2/'
 classifier = trainDataValidator(useDataset)
 textToSentiment(classifier, 'I love chocolat')
 
