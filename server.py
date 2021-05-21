@@ -3,7 +3,8 @@ from TextToSentiment import *
 from nltk import *
 
 app = Sanic('TextToSentiment')
-classifier = trainDataValidator()
+useDataset = 'dataset1/'
+classifier = trainDataValidator(useDataset)
 textToSentiment(classifier, 'I love chocolat')
 
 async def home(request):
@@ -17,12 +18,12 @@ async def process_handler(request):
     return response.json(predictionDict)
 
 async def classifier_handler(request):
-    trainClassifier()
-    classifier = trainDataValidator()
+    trainClassifier(useDataset)
+    classifier = trainDataValidator(useDataset)
     return response.redirect('/')
 
 async def dataset_handler(request):
-    infos = getDatasetInfos()
+    infos = getDatasetInfos(useDataset)
     return response.json(infos)
 
 app.add_route(home, '/')

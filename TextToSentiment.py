@@ -54,8 +54,8 @@ def getTextsForModel(cleaned_tokens_list):
 
 def trainClassifier(datasetFolder):
     infos = {
-    'positive': datasetFolder + 'positive_cleaned_tokens_large.txt'
-    'negative': datasetFolder + 'negative_cleaned_tokens_large.txt'
+    'positive': datasetFolder + 'positive_cleaned_tokens_large.txt',
+    'negative': datasetFolder + 'negative_cleaned_tokens_large.txt',
     'neutral': datasetFolder + 'neutral_cleaned_tokens_large.txt'
     }
     #~~~~~~-> Getting the dataset...
@@ -81,12 +81,12 @@ def trainClassifier(datasetFolder):
     with open('classifier.pickle', 'wb') as f:
         pickle.dump(classifier, f)
 
-def trainDataValidator():
+def trainDataValidator(datasetFolder):
     try:
         with open('classifier.pickle', 'rb') as f:
             return pickle.load(f)
     except:
-        trainClassifier('dataset1')
+        trainClassifier(datasetFolder)
         with open('classifier.pickle', 'rb') as f:
             return pickle.load(f)
 
@@ -100,11 +100,16 @@ def textToSentiment(classifier, custom_text):
         probs[str(sample)] = round(prediction.prob(sample),4)
     return {'original_text':custom_text,'prediction':probs}
 
-def getDatasetInfos():
+def getDatasetInfos(datasetFolder):
+    infos = {
+    'positive': datasetFolder + 'positive_cleaned_tokens_large.txt',
+    'negative': datasetFolder + 'negative_cleaned_tokens_large.txt',
+    'neutral': datasetFolder + 'neutral_cleaned_tokens_large.txt'
+    }
     #~~~~~~-> Getting the dataset...
-    dataset_positive = getCleanDataset('dataset/positive_cleaned_tokens_large.txt')
-    dataset_negative = getCleanDataset('dataset/negative_cleaned_tokens_large.txt')
-    dataset_neutral = getCleanDataset('dataset/neutral_cleaned_tokens_large.txt')
+    dataset_positive = getCleanDataset(infos['positive'])
+    dataset_negative = getCleanDataset(infos['negative'])
+    dataset_neutral = getCleanDataset(infos['neutral'])
     #~~~~~~-> Making the cleaned tokens list...
     positive_cleaned_tokens_list = getTokensFromDataset(dataset_positive)
     negative_cleaned_tokens_list = getTokensFromDataset(dataset_negative)
@@ -117,11 +122,9 @@ def getDatasetInfos():
     negative_dataset = [(tweet_dict, 'Negative') for tweet_dict in negative_tokens_for_model]
     neutral_dataset = [(tweet_dict, 'Neutral') for tweet_dict in neutral_tokens_for_model]
     dataset = positive_dataset + negative_dataset + neutral_dataset
-
     infos = {}
     infos['datasetSize'] = len(dataset)
     infos['posDatasetSize'] = len(dataset_positive)
     infos['negDatasetSize'] = len(dataset_negative)
     infos['neuDatasetSize'] = len(dataset_neutral)
-
     return infos
