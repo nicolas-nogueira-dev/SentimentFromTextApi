@@ -54,9 +54,9 @@ def getTextsForModel(cleaned_tokens_list):
 
 def trainClassifier(datasetFolder):
     infos = {
-    'positive': datasetFolder + 'positive_cleaned_tokens_large.txt',
-    'negative': datasetFolder + 'negative_cleaned_tokens_large.txt',
-    'neutral': datasetFolder + 'neutral_cleaned_tokens_large.txt'
+    'positive': datasetFolder + 'positive_cleaned_tokens.txt',
+    'negative': datasetFolder + 'negative_cleaned_tokens.txt',
+    'neutral': datasetFolder + 'neutral_cleaned_tokens.txt'
     }
     #~~~~~~-> Getting the dataset...
     dataset_positive = getCleanDataset(infos['positive'])
@@ -102,9 +102,9 @@ def textToSentiment(classifier, custom_text):
 
 def getDatasetInfos(datasetFolder):
     infos = {
-    'positive': datasetFolder + 'positive_cleaned_tokens_large.txt',
-    'negative': datasetFolder + 'negative_cleaned_tokens_large.txt',
-    'neutral': datasetFolder + 'neutral_cleaned_tokens_large.txt'
+    'positive': datasetFolder + 'positive_cleaned_tokens.txt',
+    'negative': datasetFolder + 'negative_cleaned_tokens.txt',
+    'neutral': datasetFolder + 'neutral_cleaned_tokens.txt'
     }
     #~~~~~~-> Getting the dataset...
     dataset_positive = getCleanDataset(infos['positive'])
