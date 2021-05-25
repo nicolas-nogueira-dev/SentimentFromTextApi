@@ -22,7 +22,7 @@ class ProcessCore(Core):
         if settings['type'] == 'csv':
             list = []
             with open(path, newline='', encoding=settings['encoding']) as csvfile:
-                spamreader = csv.reader(csvfile, delimiter=settings['delimiter'], quotechar=settings['quotechar'])
+                spamreader = csv.reader(csvfile, delimiter=settings['delimiter'], quotechar=settings['quotechar'], quoting=csv.QUOTE_MINIMAL)
                 for row in spamreader:
                     list.append(row)
             return list
@@ -64,13 +64,23 @@ class ProcessCore(Core):
         finalList =[]
         for i in list:
             for key in settings['sentimentText']:
-                if i[settings['indexExtract']['sentiment']] == key :
-                    finalList += [[i[settings['indexExtract']['text']],settings['sentimentText'][key]]]
-
+                if str(i[settings['indexExtract']['sentiment']]) == str(key) :
+                    finalList += [[str(i[settings['indexExtract']['text']]),str(settings['sentimentText'][key])]]
         return finalList
 
-    def preProcessDataset(self):
-        dataset = self.getRawDataset()
+    def saveProcessedDataset(self, finalList, settings):
+        filePath = self.folderPath + '/' + settings['newFilePath']
+        with open(filePath, 'w', encoding=settings['encoding']) as csvfile:
+            spamwriter = csv.writer(csvfile, delimiter=settings['delimiterSave'], quotechar=settings['quotecharSave'], quoting=csv.QUOTE_MINIMAL)
+            for i in finalList:
+                spamwriter.writerow([i[settings['indexSaving']['text']],i[settings['indexSaving']['sentiment']]])
+
+
+    def preProcessDataset(self, settings):
+        filePath = self.folderPath + '/' + settings['filePath']
+        dataset = self.getRawDataset(filePath, settings)
+        processedDataset = self.makeDatasetViaSentiment(dataset, settings)
+        self.saveProcessedDataset(processedDataset,settings)
 
 ######################################################################
 
@@ -80,18 +90,21 @@ sentiments = ['positive','negative']
 main = ProcessCore(folderPath, sentiments)
 
 main.preProcessDataset({'filePath':'train.csv',
-                         'type':'csv',
-                         'encoding':'utf8',
-                         'delimiter':',',
-                         'quotechar':' ',
-                         'sentimentText':{'positive':'POSITIVE',
-                                          'negative':'NEGATIVE',
-                                          'neutral':'NEUTRAL'
-                                         },
-                         'stopWord':'english',
-                         'indexExtract': {'text':2,'sentiment':1}
-                         })
+                        'newFilePath':'dataset2.csv',
+                        'type':'csv',
+                        'encoding':'utf8',
+                        'delimiter':',',
+                        'quotechar':' ',
+                        'delimiterSave':',',
+                        'quotecharSave':'"',
+                        'sentimentText':{'1':'POSITIVE',
+                                         '0':'NEGATIVE',
+                                        },
+                        'indexExtract': {'text':2,'sentiment':1},
+                        'indexSaving': {'text':0,'sentiment':1},
+                        })
 
+'''
 main.processCleanTokens({'filePath':'dataset2.csv',
                          'type':'csv',
                          'encoding':'utf8',
@@ -99,8 +112,9 @@ main.processCleanTokens({'filePath':'dataset2.csv',
                          'quotechar':'"',
                          'sentimentText':{'positive':'POSITIVE',
                                           'negative':'NEGATIVE',
-                                          'neutral':'NEUTRAL'
+                                          'neutral':'NEUTRAL',
                                          },
                          'stopWord':'english',
-                         'indexExtract': {'text':0,'sentiment':1}
+                         'indexExtract': {'text':0,'sentiment':1},
                          })
+'''
