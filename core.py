@@ -38,15 +38,15 @@ class Core():
                 cleaned_tokens.append(token.lower())
         return cleaned_tokens
 
-    def getSentimentItems(self, dataset, sentiment):
-        Text = []
+    def getSentimentItems(self, dataset, index, sentiment):
+        list = []
         for i in dataset:
             try:
-                if i[1] == sentiment:
-                    Text.append(str(i[0]))
+                if i[index['sentiment']] == sentiment:
+                    list.append(str(i[index['text']]))
             except:
                 pass
-        return Text
+        return list
 
     def getTokens(self, listText):
         finalList = []
@@ -72,7 +72,7 @@ class Core():
                 else:
                     textData += str(i[j]) + ","
             textData += ";" + str(sentiment) + "\n"
-        with open(self.folderPath + fileName+".txt", "w", encoding="utf8") as file:
+        with open(self.folderPath + '/' + fileName+".txt", "w", encoding="utf8") as file:
             file.write(textData)
         print(f"-> %s seconds for saving the {sentiment} data" % (time.time() - start_time))
 
@@ -97,7 +97,7 @@ class Core():
         #~~~~~~-> Getting the dataset...
         rawDataset = {}
         for sentiment in self.sentiments:
-            rawDataset[sentiment] = self.getCleanDatasetTokens(self.folderPath + str(sentiment) +'_cleaned_tokens.txt')
+            rawDataset[sentiment] = self.getCleanDatasetTokens(self.folderPath + '/' + str(sentiment) +'_cleaned_tokens.txt')
         #~~~~~~-> Making the cleaned tokens list...
         clean_tokens_dict = {}
         for sentiment in self.sentiments:
@@ -125,7 +125,7 @@ class Core():
         #~~~~~~-> Getting the dataset...
         dataset = {}
         for sentiment in self.sentiments:
-            filename = self.folderPath + sentiment + '_cleaned_tokens.txt'
+            filename = self.folderPath + '/' + sentiment + '_cleaned_tokens.txt'
             dataset[sentiment] = self.getCleanDataset(filename)
 
         infos = {}
