@@ -9,8 +9,6 @@ from nltk.tag import pos_tag
 from nltk.tokenize import word_tokenize
 from nltk import classify, NaiveBayesClassifier
 
-from functions import *
-
 import csv
 import pickle
 import time

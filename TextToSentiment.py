@@ -83,12 +83,14 @@ def trainClassifier(datasetFolder):
 
 def trainDataValidator(datasetFolder):
     try:
-        with open('classifier.pickle', 'rb') as f:
-            return pickle.load(f)
+        return openClassifier()
     except:
         trainClassifier(datasetFolder)
-        with open('classifier.pickle', 'rb') as f:
-            return pickle.load(f)
+        return openClassifier()
+
+def openClassifier():
+    with open('classifier.pickle', 'rb') as f:
+        return pickle.load(f)
 
 def textToSentiment(classifier, custom_text):
     custom_tokens = removeNoise(wordTokenize(custom_text))
