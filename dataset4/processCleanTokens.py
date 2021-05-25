@@ -23,6 +23,7 @@ if __name__ == '__main__':
 
     # Define the stop words
     stop_words = stopwords.words('english')
+    
     print('')
     print('-> Cleaning the tokens...')
     start_time = time.time()

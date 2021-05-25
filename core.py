@@ -9,7 +9,17 @@ import pickle
 import time
 import re, string, random
 
-class core():
+class Core():
+    def __init__(self, folderpath, sentiments):
+        self.folderPath = folderpath
+        self.sentiments = sentiments
+
+    def changeFolderPath(self, new):
+        self.folderPath = new
+
+    def changeSentiments(self, new):
+        self.sentiments = new
+
     def removeNoise(self, tweet_tokens, stop_words = ()):
         cleaned_tokens = []
         for token, tag in pos_tag(tweet_tokens):
@@ -50,7 +60,7 @@ class core():
             finalText.append(self.removeNoise(tokens, stop_words))
         return finalText
 
-    def saveCleanData(self, cleanData, sentiment, folderPath, fileName):
+    def saveCleanData(self, cleanData, sentiment, fileName):
         print("")
         print(f"-> Saving the {sentiment} data...")
         start_time = time.time()
@@ -62,11 +72,11 @@ class core():
                 else:
                     textData += str(i[j]) + ","
             textData += ";" + str(sentiment) + "\n"
-        with open(folderPath + fileName+".txt", "w", encoding="utf8") as file:
+        with open(self.folderPath + fileName+".txt", "w", encoding="utf8") as file:
             file.write(textData)
         print(f"-> %s seconds for saving the {sentiment} data" % (time.time() - start_time))
 
-    def getCleanDataset(dataSetPath):
+    def getCleanDatasetTokens(self, dataSetPath):
         # Extract the raw data
         with open(dataSetPath, "r", encoding="utf8") as file:
             data = file.read()
@@ -83,6 +93,24 @@ class core():
             process[i][0] = process[i][0].split(",")
         return process
 
+    def getCleanDataset(self):
+        #~~~~~~-> Getting the dataset...
+        rawDataset = {}
+        for sentiment in self.sentiments:
+            rawDataset[sentiment] = self.getCleanDatasetTokens(self.folderPath + str(sentiment) +'_cleaned_tokens.txt')
+        #~~~~~~-> Making the cleaned tokens list...
+        clean_tokens_dict = {}
+        for sentiment in self.sentiments:
+            clean_tokens_dict[sentiment] = self.getTokensFromDataset(rawDataset[sentiment])
+        #~~~~~~-> Making the dataset...
+        tokens_for_model = {}
+        for sentiment in self.sentiments:
+            tokens_for_model[sentiment] = self.getTextsForModel(clean_tokens_dict[sentiment])
+        dataset = {}
+        for sentiment in self.sentiments:
+            dataset[sentiment] = [(tweet_dict, sentiment) for tweet_dict in tokens_for_model[sentiment]]
+        return dataset
+
     def getTokensFromDataset(self, dataset):
         list = []
         for i in dataset:
@@ -93,53 +121,16 @@ class core():
         for tweet_tokens in cleaned_tokens_list:
             yield dict([token, True] for token in tweet_tokens)
 
-    def trainClassifier(self, sentiments, folderPath):
+    def getDatasetInfos(self):
         #~~~~~~-> Getting the dataset...
         dataset = {}
-        for sentiment in sentiments:
-            dataset[sentiment] = self.getCleanDataset(folderPath + str(sentiment) +'_cleaned_tokens.txt')
-        #~~~~~~-> Making the cleaned tokens list...
-        clean_tokens_list
-        for sentiment in sentiments:
+        for sentiment in self.sentiments:
+            filename = self.folderPath + sentiment + '_cleaned_tokens.txt'
+            dataset[sentiment] = self.getCleanDataset(filename)
 
-        positive_cleaned_tokens_list = getTokensFromDataset(dataset_positive)
-        negative_cleaned_tokens_list = getTokensFromDataset(dataset_negative)
-        #~~~~~~-> Making the dataset...
-        positive_tokens_for_model = getTextsForModel(positive_cleaned_tokens_list)
-        negative_tokens_for_model = getTextsForModel(negative_cleaned_tokens_list)
-        positive_dataset = [(tweet_dict, "Positive") for tweet_dict in positive_tokens_for_model]
-        negative_dataset = [(tweet_dict, "Negative") for tweet_dict in negative_tokens_for_model]
-        dataset = positive_dataset + negative_dataset
-        random.shuffle(dataset)
-        train_data = dataset
-        #~~~~~~-> Training the model...
-        classifier = NaiveBayesClassifier.train(train_data)
-        with open('classifier.pickle', 'wb') as f:
-            pickle.dump(classifier, f)
-
-    def loadClassifier(self, path):
-        with open(path, 'rb') as f:
-            return pickle.load(f)
-
-    def trainDataValidator(self):
-        try:
-            return self.loadClassifier('classifier.pickle')
-        except:
-            self.trainClassifier()
-            return self.loadClassifier('classifier.pickle')
-
-    def textToSentiment(custom_text):
-        classifier = trainDataValidator()
-
-        custom_tokens = removeNoise(word_tokenize(custom_text))
-        custom_dict = dict([token, True] for token in custom_tokens)
-
-        prediction = classifier.prob_classify(custom_dict)
-
-        probs = {}
-        samples = prediction.samples()
-        print(samples)
-        for sample in samples:
-            probs[str(sample)] = prediction.prob(sample)
-
-        return probs
+        infos = {}
+        infos['datasetSize'] = 0
+        for sentiment in self.sentiments:
+            infos[sentiment] = len(dataset[sentiment])
+            infos['datasetSize'] += len(dataset[sentiment])
+        return infos
