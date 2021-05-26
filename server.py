@@ -27,7 +27,7 @@ app = Sanic('TextToSentiment')
 useDataset = 'dataset5'
 classifierPath = 'classifier.pickle'
 
-classifierCore = ClassifierCore(useDataset,datasetInfos[useDataset]['sentiments'])
+classifierCore = ClassifierCore(useDataset,datasetInfos[useDataset]['sentiments'],classifierPath)
 
 classifier = classifierCore.trainDataValidator()
 

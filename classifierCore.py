@@ -7,8 +7,9 @@ import random
 
 class ClassifierCore(Core):
 
-    def __init__(self, folderpath, sentiments):
+    def __init__(self, folderpath, sentiments, classifierPath):
         super().__init__(folderpath, sentiments)
+        self.classifierPath = classifierPath
 
     def trainClassifier(self):
         dataset = self.getCleanDataset()
@@ -23,7 +24,7 @@ class ClassifierCore(Core):
         random.shuffle(train_data)
         #~~~~~~-> Training the model...
         classifier = NaiveBayesClassifier.train(train_data)
-        self.saveClassifier(classifier,'classifier.pickle')
+        self.saveClassifier(classifier,self.classifierPath)
 
     def loadClassifier(self, path):
         with open(path, 'rb') as f:
@@ -35,10 +36,10 @@ class ClassifierCore(Core):
 
     def trainDataValidator(self):
         try:
-            return self.loadClassifier('classifier.pickle')
+            return self.loadClassifier(self.classifierPath)
         except:
             self.trainClassifier()
-            return self.loadClassifier('classifier.pickle')
+            return self.loadClassifier(self.classifierPath)
 
     def processCustomText(self, custom_text):
         custom_tokens = self.removeNoise(word_tokenize(custom_text))
