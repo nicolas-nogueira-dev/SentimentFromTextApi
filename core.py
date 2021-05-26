@@ -2,12 +2,9 @@ from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.corpus import stopwords
 from nltk.tag import pos_tag
 from nltk.tokenize import word_tokenize
-from nltk import NaiveBayesClassifier
 
-import csv
-import pickle
 import time
-import re, string, random
+import re, string
 
 class Core():
     def __init__(self, folderpath, sentiments):

@@ -1,14 +1,8 @@
-from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.corpus import stopwords
-from nltk.tag import pos_tag
-from nltk.tokenize import word_tokenize
-from nltk import NaiveBayesClassifier
 from core import *
 
 import csv
-import pickle
 import time
-import re, string, random
 
 class ProcessCore(Core):
 
@@ -28,11 +22,23 @@ class ProcessCore(Core):
             return list
 
     def processCleanTokens(self, settings):
-        print('-> Getting the dataset...')
-        start_time = time.time()
         filePath = self.folderPath + '/' + settings['filePath']
+        print(f'-> Getting the dataset ({filePath})...')
+        start_time = time.time()
         dataset = self.getRawDataset(filePath, settings)
         print('-> %s seconds for get the dataset' % (time.time() - start_time))
+
+        print('')
+        print('-> Getting the raw text...')
+        rawText = {}
+        start_time = time.time()
+        for sentiment in self.sentiments:
+            print(f'-> Getting the {sentiment} raw text...')
+            start_time_tmp = time.time()
+            rawText[sentiment] = self.getSentimentItems(dataset, settings['indexExtract'],settings['sentimentText'][sentiment])
+            print(f'-> {time.time() - start_time_tmp} seconds for get the {sentiment} raw text')
+        print('-> %s seconds for get the raw text' % (time.time() - start_time))
+
         print('')
         print('-> Getting the tokens...')
         tokens = {}
@@ -40,9 +46,9 @@ class ProcessCore(Core):
         for sentiment in self.sentiments:
             print(f'-> Getting the {sentiment} tokens...')
             start_time_tmp = time.time()
-            tokens[sentiment] = self.getSentimentItems(dataset, settings['indexExtract'],settings['sentimentText'][sentiment])
+            tokens[sentiment] = self.getTokens(rawText[sentiment])
             print(f'-> {time.time() - start_time_tmp} seconds for get the {sentiment} tokens')
-        print('-> %s seconds for get the tokens' % (time.time() - start_time))
+        print('-> %s seconds for get the raw text' % (time.time() - start_time))
 
         stop_words = stopwords.words(settings['stopWord'])
 
@@ -84,28 +90,28 @@ class ProcessCore(Core):
 
 ######################################################################
 
-folderPath = 'dataset2'
+folderPath = 'dataset5'
 sentiments = ['positive','negative']
 
 main = ProcessCore(folderPath, sentiments)
 
-main.preProcessDataset({'filePath':'train.csv',
-                        'newFilePath':'dataset2.csv',
+main.preProcessDataset({'filePath':'TranslatedDigikalaDataset.csv',
+                        'newFilePath':str(folderPath+'.csv'),
                         'type':'csv',
                         'encoding':'utf8',
                         'delimiter':',',
-                        'quotechar':' ',
+                        'quotechar':'"',
                         'delimiterSave':',',
                         'quotecharSave':'"',
                         'sentimentText':{'1':'POSITIVE',
                                          '0':'NEGATIVE',
                                         },
-                        'indexExtract': {'text':2,'sentiment':1},
+                        'indexExtract': {'text':0,'sentiment':1},
                         'indexSaving': {'text':0,'sentiment':1},
                         })
 
-'''
-main.processCleanTokens({'filePath':'dataset2.csv',
+
+main.processCleanTokens({'filePath':str(folderPath+'.csv'),
                          'type':'csv',
                          'encoding':'utf8',
                          'delimiter':',',
@@ -117,4 +123,3 @@ main.processCleanTokens({'filePath':'dataset2.csv',
                          'stopWord':'english',
                          'indexExtract': {'text':0,'sentiment':1},
                          })
-'''

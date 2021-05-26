@@ -1,27 +1,26 @@
-from nltk.stem.wordnet import WordNetLemmatizer
-from nltk.corpus import stopwords
-from nltk.tag import pos_tag
 from nltk.tokenize import word_tokenize
 from nltk import NaiveBayesClassifier
 from core import *
 
-import csv
 import pickle
-import time
-import re, string, random
+import random
 
 class ClassifierCore(Core):
+
+    def __init__(self, folderpath, sentiments):
+        super().__init__(folderpath, sentiments)
 
     def trainClassifier(self):
         dataset = self.getCleanDataset()
         finalDataset = []
-        for sentDataset in dataset:
-            finalDataset.append(sentDataset)
+        for key in dataset:
+            finalDataset += [dataset[key]]
         random.shuffle(finalDataset)
         train_data = finalDataset
+        print(len(finalDataset))
         #~~~~~~-> Training the model...
         classifier = NaiveBayesClassifier.train(train_data)
-        self.saveClassifier('classifier.pickle')
+        self.saveClassifier(classifier,'classifier.pickle')
 
     def loadClassifier(self, path):
         with open(path, 'rb') as f:
@@ -56,3 +55,14 @@ class ClassifierCore(Core):
             probs[str(sample)] = prediction.prob(sample)
 
         return probs
+
+###############################################
+
+folderPath = 'dataset5'
+sentiments = ['positive','negative']
+
+main = ClassifierCore(folderPath, sentiments)
+
+main.trainClassifier()
+
+print(main.textToSentiment('I love chocolat'))
