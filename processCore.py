@@ -89,7 +89,7 @@ class ProcessCore(Core):
         self.saveProcessedDataset(processedDataset,settings)
 
 ######################################################################
-
+'''
 folderPath = 'dataset5'
 sentiments = ['positive','negative']
 
@@ -123,3 +123,4 @@ main.processCleanTokens({'filePath':str(folderPath+'.csv'),
                          'stopWord':'english',
                          'indexExtract': {'text':0,'sentiment':1},
                          })
+'''

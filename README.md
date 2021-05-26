@@ -13,3 +13,5 @@ dataset2 : https://www.kaggle.com/arkhoshghalb/twitter-sentiment-analysis-hatred
 dataset3 : https://www.kaggle.com/atulanandjha/imdb-50k-movie-reviews-test-your-bert
 
 dataset4 : https://www.kaggle.com/ashishpatel26/sentimental-analysis-nlp
+
+dataset5 : https://github.com/alisoltanirad/sentiment-analysis

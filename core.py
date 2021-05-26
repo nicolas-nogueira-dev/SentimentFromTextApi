@@ -123,7 +123,7 @@ class Core():
         dataset = {}
         for sentiment in self.sentiments:
             filename = self.folderPath + '/' + sentiment + '_cleaned_tokens.txt'
-            dataset[sentiment] = self.getCleanDataset(filename)
+            dataset[sentiment] = self.getCleanDataset()
 
         infos = {}
         infos['datasetSize'] = 0
