@@ -22,10 +22,37 @@ datasetInfos = {'dataset1':{'name':'dataset1',
                                           'negative']},
 }
 
-
 app = Sanic('TextToSentiment')
 useDataset = 'dataset5'
 classifierPath = 'classifier.pickle'
+
+extractSettings = {'filePath':'TranslatedDigikalaDataset.csv',
+                        'newFilePath':str(useDataset+'.csv'),
+                        'type':'csv',
+                        'encoding':'utf8',
+                        'delimiter':',',
+                        'quotechar':'"',
+                        'delimiterSave':',',
+                        'quotecharSave':'"',
+                        'sentimentText':{'1':'POSITIVE',
+                                         '0':'NEGATIVE',
+                                        },
+                        'indexExtract': {'text':0,'sentiment':1},
+                        'indexSaving': {'text':0,'sentiment':1},
+                        }
+
+savingSettings = {'filePath':str(useDataset+'.csv'),
+                         'type':'csv',
+                         'encoding':'utf8',
+                         'delimiter':',',
+                         'quotechar':'"',
+                         'sentimentText':{'positive':'POSITIVE',
+                                          'negative':'NEGATIVE',
+                                          'neutral':'NEUTRAL',
+                                         },
+                         'stopWord':'english',
+                         'indexExtract': {'text':0,'sentiment':1},
+                         }
 
 classifierCore = ClassifierCore(useDataset,datasetInfos[useDataset]['sentiments'],classifierPath)
 
@@ -61,12 +88,21 @@ async def debug_handler(request):
     infos = {'useDataset':useDataset,'sentiments':datasetInfos[useDataset]['sentiments']}
     return response.json(infos)
 
+async def add_dataset_handler(request):
+    global extractSettings
+    global savingSettings
+    main = ProcessCore(useDataset,datasetInfos[useDataset]['sentiments'])
+    main.preProcessDataset(extractSettings)
+    main.processCleanTokens(savingSettings)
+    return response.redirect('/')
+
 app.add_route(home, '/')
 app.add_route(process_handler, '/process', methods=['POST'])
 app.add_route(choice_handler, '/dataset', methods=['POST'])
 app.add_route(classifier_handler, '/train')
 app.add_route(dataset_handler, '/dataset-infos')
 app.add_route(debug_handler, '/debug')
+app.add_route(add_dataset_handler, '/add-dataset')
 
 if __name__ == '__main__':
    app.run(host='0.0.0.0', port=8000, debug=True)

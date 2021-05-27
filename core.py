@@ -3,7 +3,6 @@ from nltk.corpus import stopwords
 from nltk.tag import pos_tag
 from nltk.tokenize import word_tokenize
 
-import time
 import re, string
 
 class Core():
@@ -58,9 +57,6 @@ class Core():
         return finalText
 
     def saveCleanData(self, cleanData, sentiment, fileName):
-        print("")
-        print(f"-> Saving the {sentiment} data...")
-        start_time = time.time()
         textData = ""
         for i in cleanData:
             for j in range(len(i)):
@@ -71,7 +67,6 @@ class Core():
             textData += ";" + str(sentiment) + "\n"
         with open(self.folderPath + '/' + fileName+".txt", "w", encoding="utf8") as file:
             file.write(textData)
-        print(f"-> %s seconds for saving the {sentiment} data" % (time.time() - start_time))
 
     def getCleanDatasetTokens(self, dataSetPath):
         # Extract the raw data
@@ -124,7 +119,6 @@ class Core():
         for sentiment in self.sentiments:
             filename = self.folderPath + '/' + sentiment + '_cleaned_tokens.txt'
             dataset[sentiment] = self.getCleanDataset()
-
         infos = {}
         infos['datasetSize'] = 0
         for sentiment in self.sentiments:
